@@ -9,34 +9,77 @@ public class Main {
         char[] chars = new char[9];
         str = str.toUpperCase();
         for (int i = 0; i < chars.length; i++) {
-            if (str.charAt(i) != 'X' && str.charAt(i) != '_' && str.charAt(i) != 'O') {
+            if (str.charAt(i) != 'X' && str.charAt(i) != ' ' && str.charAt(i) != 'O') {
                 System.out.println("Wrong input");
             }
             chars[i] = str.charAt(i);
         }
-        char[][] matrix = new char[3][3];
+        char[][] matrix = new char[4][4];
+        matrix[1][3] = chars[0];
+        matrix[2][3] = chars[1];
+        matrix[3][3] = chars[2];
+        matrix[1][2] = chars[3];
+        matrix[2][2] = chars[4];
+        matrix[3][2] = chars[5];
+        matrix[1][1] = chars[6];
+        matrix[2][1] = chars[7];
+        matrix[3][1] = chars[8];
 
-        System.out.println("---------");
-        System.out.println("| " + chars[0] + " " + chars[1]
-                + " " + chars[2] + " |");
-        System.out.println("| " + chars[3] + " " + chars[4]
-                + " " + chars[5] + " |");
-        System.out.println("| " + chars[6] + " " + chars[7]
-                + " " + chars[8] + " |");
-        System.out.println("---------");
+        boolean xTurn = true;
+        drawField(matrix);
+
+        while (!x_WinsCondition(chars) || !o_WinsCondition(chars) || !contains(' ', chars)) {
+            try {
+                System.out.print("Enter the coordinates: ");
+                int first = scanner.nextInt();
+                int second = scanner.nextInt();
+                if (isEmpty(matrix, first, second)) {
+                    if (xTurn) {
+                        matrix[first][second] = 'X';
+                        xTurn = false;
+                    } else {
+                        matrix[first][second] = 'O';
+                        xTurn = true;
+                    }
+                    drawField(matrix);
+                }
+            } catch (Exception e) {
+                scanner.nextLine();
+                System.out.println("You should enter numbers!");
+            }
+        }
 
         if (isPossible(chars) && x_WinsCondition(chars) && !o_WinsCondition(chars)) {
             System.out.println("X wins");
         } else if(isPossible(chars) && o_WinsCondition(chars) && !x_WinsCondition(chars)) {
             System.out.println("O wins");
-        } else if (!contains('_', chars)) {
+        } else if (!contains(' ', chars)) {
             System.out.println("Draw");
-        } else if (contains('_', chars)
+        } else if (contains(' ', chars)
                 && (!o_WinsCondition(chars) || !x_WinsCondition(chars)) && isPossible(chars)) {
             System.out.println("Game not finished");
         } else if (!isPossible(chars) || o_WinsCondition(chars) && x_WinsCondition(chars)) {
             System.out.println("Impossible");
         }
+    }
+
+    public static void drawField (char[][] matrix) {
+        System.out.println("---------");
+        System.out.println("| " + matrix[1][3] + " " + matrix[2][3]
+                + " " + matrix[3][3] + " |");
+        System.out.println("| " + matrix[1][2] + " " + matrix[2][2]
+                + " " + matrix[3][2] + " |");
+        System.out.println("| " + matrix[1][1] + " " + matrix[2][1]
+                + " " + matrix[3][1] + " |");
+        System.out.println("---------");
+    }
+
+    public static boolean isEmpty (char[][] matrix, int first, int second) {
+        if (matrix[first][second] != ' ') {
+            System.out.println("This cell is occupied! Choose another one!");
+            return false;
+        }
+        return true;
     }
 
     public static boolean o_WinsCondition (char[] chars) {
